@@ -1,0 +1,63 @@
+name: Droid Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: droid-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  pull-requests: write
+  contents: read
+  issues: write
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Install Droid CLI
+        run: |
+          curl -fsSL https://app.factory.ai/cli | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Configure git identity
+        run: |
+          git config user.name "Droid Agent"
+          git config user.email "droidagent@factory.ai"
+
+      - name: Perform automated code review
+        env:
+          FACTORY_API_KEY: ${{ secrets.FACTORY_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          
+          # 1. 创建 Prompt 指令文件
+          cat > prompt.txt << 'EOF'
+          You are an automated code review system. 
+          Task: Review the PR diff and submit findings using GitHub CLI.
+          
+          First, use Web Fetch to get context: https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
+          
+          Focus on: Logic errors, Dead code, Security issues, React bugs.
+          Skip: Formatting, Style.
+          
+          Action: Use 'gh pr review' to post comments inline.
+          Examples:
+          - gh pr review ${{ github.event.pull_request.number }} --comment -b "Review Summary"
+          - gh pr review --comment -b "This will crash if null" -f "file.js:10"
+          EOF
+
+          # 2. 唤醒 Droid (注意: model 请根据你账号权限调整，推荐 claude-3-5-sonnet)
+          "$HOME/.local/bin/droid" exec --auto high --model claude-3-5-sonnet -f prompt.txt
