@@ -1,0 +1,17 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Renviron
+.DS_Store
+
+# R package build artifacts
+/*.tar.gz
+/*.Rcheck/
+/Meta/
+/doc/
+/docs/
+
+# IDE
+.vscode/
+*.swp

@@ -1,0 +1,30 @@
+Package: rsidebot
+Title: Restaurant Tipping Data Dashboard with AI Chat
+Version: 0.1.0
+Authors@R: 
+    person("Zero", "", , "zero@example.com", role = c("aut", "cre"))
+Description: A Shiny dashboard for exploring restaurant tipping data with an 
+    AI-powered chatbot sidebar. Users can interactively filter, sort, and 
+    analyze tip data through natural language queries powered by Claude AI.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports:
+    shiny,
+    bslib,
+    fontawesome,
+    reactable,
+    plotly,
+    ggplot2,
+    ggridges,
+    dplyr,
+    querychat,
+    ellmer,
+    readr,
+    purrr,
+    reticulate,
+    shinychat
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

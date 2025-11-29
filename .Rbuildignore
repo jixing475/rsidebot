@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.DS_Store$
+^\.Rhistory$
+^openspec$
+^AGENTS\.md$
+^scripts$
+^manifest\.json$
+^tips\.duckdb$
+^jixing\.md$
+^\.factory$
